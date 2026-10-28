@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meus Investimentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f2f3f5;--card:#fff;--ink:#16181d;--mut:#6b7280;--line:#e5e7eb;--y:#ffc20e;--blk:#000;--g:#0a9d5a;--r:#d92d3a}
+@media(prefers-color-scheme:dark){:root{--bg:#0d0e11;--card:#17191e;--ink:#eef0f3;--mut:#9aa1ad;--line:#262a31;--g:#2fd48a;--r:#ff5c69}}
+*{box-sizing:border-box;margin:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+header{background:var(--blk);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;position:sticky;top:0;z-index:5;gap:12px}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.5px}.logo b{color:var(--y)}
+.hb{display:flex;gap:8px;align-items:center}
+.av{width:34px;height:34px;border-radius:50%;background:var(--y);color:#000;font-weight:700;display:grid;place-items:center}
+.top{background:var(--card);border-bottom:1px solid var(--line);display:flex;padding:0 24px;gap:4px;overflow-x:auto}
+.top button{background:none;border:0;border-bottom:3px solid transparent;color:var(--ink);padding:14px 16px;font:500 14px Inter;cursor:pointer;white-space:nowrap}
+.top button.on{border-bottom-color:var(--y);font-weight:700}
+button:focus-visible,input:focus-visible{outline:2px solid var(--y);outline-offset:2px}
+.btn{border:0;border-radius:8px;padding:9px 16px;font:600 13px Inter;cursor:pointer;background:var(--y);color:#000}
+.btn.o{background:transparent;color:#fff;border:1px solid #555}
+.btn.s{padding:5px 12px;font-size:12px}.btn.r{background:var(--r);color:#fff}.btn.g{background:var(--g);color:#fff}
+main{padding:24px;max-width:1320px;margin:auto}
+h1{font-size:26px;letter-spacing:-.5px}
+.sub{color:var(--mut);margin:4px 0 20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 10px;border-radius:20px;background:var(--line);font-weight:600}.badge.live{background:#d8f5e7;color:#067a46}
+.grid{display:grid;gap:16px}.k{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.hero{background:var(--blk);color:#fff;border-color:var(--blk);border-top:4px solid var(--y)}
+.lbl{color:var(--mut);font-size:13px;margin-bottom:6px}.hero .lbl{color:#b5b9c2}
+.val{font-size:24px;font-weight:700;letter-spacing:-.5px}.sm{font-size:13px;margin-top:4px;font-weight:600}
+.pos{color:var(--g)}.neg{color:var(--r)}.hero .pos{color:#3be08f}
+.two{grid-template-columns:2fr 1fr;margin-top:16px}
+h2{font-size:16px;margin-bottom:12px}
+.ch{position:relative;height:300px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 14px;border-radius:20px;font:500 13px Inter;cursor:pointer}
+.tab.on{background:var(--blk);color:var(--y);border-color:var(--blk)}
+input{font:14px Inter;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+#q{max-width:240px;margin-left:auto}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:820px}
+th{text-align:right;color:var(--mut);font-weight:600;font-size:12px;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{text-align:right;padding:11px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}td small{display:block;color:var(--mut);font-size:12px}
+.tk{font-weight:700}.bar{display:inline-block;height:6px;border-radius:3px;background:var(--y);vertical-align:middle;margin-right:6px}
+td .btn{margin-left:4px}
+dialog{border:0;border-radius:12px;padding:24px;width:min(420px,92vw);background:var(--card);color:var(--ink)}
+dialog::backdrop{background:#000a}
+dialog h3{margin-bottom:4px}dialog p{color:var(--mut);margin:4px 0}dialog label{display:block;margin:14px 0 6px;font-weight:600;font-size:13px}
+.row{display:flex;gap:8px;margin-top:18px}.row .btn{flex:1;padding:12px}
+.tot{margin-top:10px;font-weight:700}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--blk);color:#fff;padding:12px 20px;border-radius:8px;border-left:4px solid var(--y);display:none;z-index:20}
+.note{margin-top:20px;color:var(--mut);font-size:12px;line-height:1.5}
+.v{display:none}.v.on{display:block}
+@media(max-width:860px){.two{grid-template-columns:1fr}main{padding:14px}header{padding:0 14px}}
+</style>
+</head>
+<body>
+<header><div class="logo">Meus<b>Investimentos</b></div>
+<div class="hb"><button class="btn" data-m="dep">Depositar</button><button class="btn o" data-m="saq">Sacar</button><div class="av">K</div></div></header>
+<div class="top" id="top"><button data-v="dash" class="on">Início</button><button data-v="cart">Carteira</button><button data-v="mkt">Mercado</button><button data-v="ext">Extrato</button></div>
+<main>
+<h1>Olá, Kayque 👋</h1>
+<div class="sub"><span id="data"></span><span class="badge" id="st">Modo demonstração</span><span id="upd"></span></div>
+<div class="v on" id="dash">
+<div class="grid k">
+<div class="card hero"><div class="lbl">Patrimônio investido</div><div class="val" id="k1"></div><div class="sm pos" id="k1b"></div></div>
+<div class="card"><div class="lbl">Valor aplicado</div><div class="val" id="k2"></div></div>
+<div class="card"><div class="lbl">Lucro total</div><div class="val" id="k3"></div><div class="sm" id="k3b"></div></div>
+<div class="card"><div class="lbl">Variação do dia</div><div class="val" id="k4"></div><div class="sm" id="k4b"></div></div>
+<div class="card"><div class="lbl">Saldo em conta</div><div class="val" id="k5"></div></div>
+</div>
+<div class="grid two"><div class="card"><h2>Evolução do patrimônio</h2><div class="ch"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>Alocação por classe</h2><div class="ch"><canvas id="c2"></canvas></div></div></div>
+<div class="card" style="margin-top:16px"><h2>Rentabilidade por ativo (%)</h2><div class="ch"><canvas id="c3"></canvas></div></div>
+</div>
+<div class="v card" id="cart"><h2>Minha carteira</h2><div class="tw"><table><thead><tr><th>Ativo</th><th>Qtd.</th><th>Preço médio</th><th>Preço atual</th><th>Dia</th><th>Resultado</th><th>%</th><th>Peso</th><th></th></tr></thead><tbody id="tc"></tbody></table></div></div>
+<div class="v card" id="mkt"><h2>Mercado</h2><div class="tabs" id="tabs"></div><div class="tw"><table><thead><tr><th>Ativo</th><th>Classe</th><th>Preço atual</th><th>Dia</th><th>Em carteira</th><th></th></tr></thead><tbody id="tm"></tbody></table></div></div>
+<div class="v card" id="ext"><h2>Extrato</h2><div class="tw"><table><thead><tr><th>Data</th><th>Operação</th><th>Descrição</th><th>Valor</th></tr></thead><tbody id="te"></tbody></table></div></div>
+<p class="note">Plataforma de demonstração: posições, ordens e lucros são simulados e não há dinheiro real. Os preços de demonstração são aproximados e oscilam de forma aleatória; os nomes de fundos são fictícios. Não é uma corretora e não constitui recomendação de investimento. Rentabilidade passada não garante resultados futuros.</p>
+</main>
+<dialog id="dlg"></dialog><div id="toast"></div>
+<script>
+const TOKEN=""; // opcional: token gratuito da brapi.dev
+const TOTAL=87964,$=id=>document.getElementById(id),FMT=n=>n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const PC=n=>(n>=0?'+':'')+n.toFixed(2).replace('.',',')+'%',CL=n=>n>=0?'pos':'neg',sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+const CN={A:"Ações",F:"FIIs",G:"Global",U:"Fundos",R:"Renda fixa",C:"Cripto"},INT="AFG";
+// ticker|nome|classe|preço|ganho|investido
+const RAW=`PETR4|Petrobras PN|A|38.5|.22|6500
+PETR3|Petrobras ON|A|41.2|.18|3000
+VALE3|Vale ON|A|66.5|.09|5200
+ITUB4|Itaú Unibanco PN|A|41|.25|6800
+BBDC4|Bradesco PN|A|16.4|.06|2400
+BBAS3|Banco do Brasil ON|A|24.8|.12|4500
+BPAC11|BTG Pactual Unit|A|36.9|.30|3500
+ABEV3|Ambev ON|A|14.2|.05|2200
+WEGE3|WEG ON|A|48|.2|3000
+GGBR3|Gerdau ON|A|17.2|.1|0
+GGBR4|Gerdau PN|A|18.1|.14|1500
+CMIG4|Cemig PN|A|10.6|.28|2000
+TAEE11|Taesa Unit|A|36.8|.15|2400
+PRIO3|PRIO ON|A|45|.35|2500
+SUZB3|Suzano ON|A|52|.08|1800
+RENT3|Localiza ON|A|45|0|0
+RADL3|Raia Drogasil ON|A|26|0|0
+LREN3|Lojas Renner ON|A|17|0|0
+EQTL3|Equatorial ON|A|33|0|0
+EMBJ3|Embraer ON|A|70|0|0
+B3SA3|B3 ON|A|14|0|0
+RAIL3|Rumo ON|A|15|0|0
+AXIA3|Axia Energia ON|A|48|0|0
+MGLU3|Magazine Luiza ON|A|9.5|0|0
+MXRF11|Maxi Renda FII|F|9.75|.08|3500
+HGLG11|CGHG Logística FII|F|156.4|.11|3200
+XPLG11|XP Log FII|F|106.2|.09|2800
+KNRI11|Kinea Renda Imobiliária FII|F|161.5|.1|3000
+KNCR11|Kinea Rendimentos FII|F|104.5|.07|3500
+XPML11|XP Malls FII|F|108|.09|2500
+VISC11|Vinci Shopping Centers FII|F|112|0|0
+BTLG11|BTG Pactual Logística FII|F|103|0|0
+HGRU11|CSHG Renda Urbana FII|F|130|0|0
+VGHF11|Valora Hedge Fund FII|F|8.4|0|0
+RZTR11|Riza Terrax FII|F|95|0|0
+BCFF11|BTG Fundo de Fundos FII|F|7.2|0|0
+NVDC34|NVIDIA (BDR)|G|38.9|.45|3500
+MSFT34|Microsoft (BDR)|G|71.2|.2|2500
+AAPL34|Apple (BDR)|G|62.8|0|0
+GOGL34|Alphabet (BDR)|G|74.5|0|0
+AMZO34|Amazon (BDR)|G|52|0|0
+TSLA34|Tesla (BDR)|G|28|0|0
+M1TA34|Meta Platforms (BDR)|G|90|0|0
+IVVB11|ETF S&P 500|G|385|.18|3000
+NASD11|ETF Nasdaq-100|G|130|0|0
+ATLDI|Atlas DI Referenciado FIC FI|U|3.1245|.07|3000
+HRZMM|Horizonte Multimercado FIM|U|2.874|.05|2000
+MRDAC|Meridiano Ações Dividendos FIA|U|4.512|0|0
+CRZCP|Cruzeiro Crédito Privado FIRF|U|1.987|0|0
+ALVMC|Alvorada Macro FIM|U|5.236|0|0
+NRTSC|Norte Ações Small Caps FIA|U|3.318|0|0
+SLMIN|Solimões Infra Debêntures Incentivadas|U|1.452|0|0
+BRIPC|Brasil Renda Fixa IPCA FIRF|U|2.108|0|0
+SELIC|Tesouro Selic 2029|R|15800|.09|0
+IPCA35|Tesouro IPCA+ 2035|R|3900|0|0
+PRE29|Tesouro Prefixado 2029|R|780|0|0
+CDBAL|CDB Banco Alfa 112% CDI|R|1000|0|0
+LCIBE|LCI Banco Beta 94% CDI|R|1000|0|0
+CDBDL|CDB Delta 13,2% a.a.|R|1000|0|0
+DEBIN|Debênture Incentivada IPCA+7%|R|1000|0|0
+CRIGM|CRI Gama CDI+3%|R|1000|0|0
+BTC|Bitcoin|C|560000|.4|4000
+ETH|Ethereum|C|21000|.25|1800
+SOL|Solana|C|1050|0|0
+BNB|BNB|C|3300|0|0
+XRP|XRP|C|12.5|0|0
+ADA|Cardano|C|4.1|0|0
+DOGE|Dogecoin|C|1.05|0|0
+LINK|Chainlink|C|110|0|0`;
+const A=RAW.split("\n").map((l,i)=>{const [t,n,c,p,g,inv]=l.split("|");return{t,n,c,g:+g,inv:+inv,p0:+p,price:+p,open:+p*(1-(((i*37)%13)-6)/1000)}});
+const GEC={BTC:"bitcoin",ETH:"ethereum",SOL:"solana",BNB:"binancecoin",XRP:"ripple",ADA:"cardano",DOGE:"dogecoin",LINK:"chainlink"};
+let S={cash:5000,pos:{},ext:[]},LIVE=false,SAVED=false,F="Todos",CH={};
+try{const x=JSON.parse(localStorage.getItem("mi_v2"));if(x&&x.pos){S=x;SAVED=true}}catch(e){}
+const save=()=>{try{localStorage.setItem("mi_v2",JSON.stringify(S))}catch(e){}};
+const get=t=>A.find(a=>a.t==t);
+function seed(){let s=0;S.pos={};A.forEach(a=>{if(a.inv&&a.t!="SELIC"){const pm=a.p0/(1+a.g),q=INT.includes(a.c)?Math.floor(a.inv/pm):+(a.inv/pm).toFixed(6);S.pos[a.t]={q,cost:q*pm};s+=q*pm}});
+ const a=get("SELIC"),pm=a.p0/1.09,c=TOTAL-s;S.pos.SELIC={q:c/pm,cost:c};
+ S.ext=[{d:Date.now()-864e5*40,tx:"Depósito",n:"Aporte inicial",v:TOTAL+5000}]}
+if(!SAVED){seed();save()}
+const posL=()=>Object.keys(S.pos).map(t=>{const a=get(t),p=S.pos[t];return{...a,q:p.q,cost:p.cost,val:p.q*a.price,pm:p.cost/p.q}});
+const fq=(q,c)=>q.toLocaleString('pt-BR',{maximumFractionDigits:INT.includes(c)?0:c=="C"?6:4});
+const day=a=>(a.price/a.open-1)*100;
+function kpis(){const L=posL(),v=sum(L,p=>p.val),cost=sum(L,p=>p.cost),res=v-cost,d=sum(L,p=>p.q*(p.price-p.open));
+ $("k1").textContent=FMT(v);$("k1b").textContent=PC(res/cost*100)+" sobre o aplicado";$("k2").textContent=FMT(cost);
+ $("k3").textContent=FMT(res);$("k3").className="val "+CL(res);$("k3b").textContent=PC(res/cost*100);$("k3b").className="sm "+CL(res);
+ $("k4").textContent=FMT(d);$("k4").className="val "+CL(d);$("k4b").textContent=PC(d/v*100);$("k4b").className="sm "+CL(d);$("k5").textContent=FMT(S.cash);return{v,cost,res}}
+function tCart(){const L=posL().sort((a,b)=>b.val-a.val),v=sum(L,p=>p.val);
+ $("tc").innerHTML=L.map(p=>{const r=p.val-p.cost,w=p.val/v*100;return`<tr><td><span class="tk">${p.t}</span><small>${p.n}</small></td><td>${fq(p.q,p.c)}</td><td>${FMT(p.pm)}</td><td>${FMT(p.price)}</td><td class="${CL(day(p))}">${PC(day(p))}</td><td class="${CL(r)}">${FMT(r)}</td><td class="${CL(r)}">${PC(r/p.cost*100)}</td><td><span class="bar" style="width:${Math.min(w*6,60)}px"></span>${w.toFixed(1).replace('.',',')}%</td><td><button class="btn s g" data-a="buy" data-t="${p.t}">Comprar</button><button class="btn s r" data-a="sell" data-t="${p.t}">Vender</button></td></tr>`}).join("")}
+function tMkt(){const q=$("q")?$("q").value.toLowerCase():"";
+ $("tabs").innerHTML=["Todos",...Object.values(CN)].map(c=>`<button class="tab ${c==F?'on':''}" data-f="${c}">${c}</button>`).join("")+`<input id="q" placeholder="Buscar ativo" value="${q}">`;
+ $("tm").innerHTML=A.filter(a=>(F=="Todos"||CN[a.c]==F)&&(a.t+a.n).toLowerCase().includes(q)).map(a=>{const h=S.pos[a.t];return`<tr><td><span class="tk">${a.t}</span><small>${a.n}</small></td><td>${CN[a.c]}</td><td>${FMT(a.price)}</td><td class="${CL(day(a))}">${PC(day(a))}</td><td>${h?fq(h.q,a.c):"—"}</td><td><button class="btn s g" data-a="buy" data-t="${a.t}">Comprar</button></td></tr>`}).join("");
+ if(q){$("q").focus();$("q").setSelectionRange(q.length,q.length)}}
+function tExt(){$("te").innerHTML=[...S.ext].reverse().map(e=>`<tr><td>${new Date(e.d).toLocaleDateString("pt-BR")}</td><td>${e.tx}</td><td>${e.n}</td><td class="${/Depósito|Venda/.test(e.tx)?'pos':'neg'}">${FMT(e.v)}</td></tr>`).join("")}
+function charts(){if(!window.Chart)return;const{v,cost,res}=kpis();
+ const css=getComputedStyle(document.documentElement),mut=css.getPropertyValue('--mut'),line=css.getPropertyValue('--line'),G=css.getPropertyValue('--g').trim(),R=css.getPropertyValue('--r').trim();
+ Chart.defaults.color=mut;Chart.defaults.font.family="Inter";const dst=(id,c)=>{CH[id]&&CH[id].destroy();CH[id]=new Chart($(id),c)};
+ const M=["Nov","Dez","Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out"],tr=res/cost,n=M.length-1;
+ const inv=M.map((_,i)=>cost*(.5+.5*i/n)),dip=i=>-.11*Math.exp(-Math.pow(i-5.5,2)/1.6);
+ const pat=inv.map((x,i)=>i==n?v:x*(1+tr*Math.pow(i/n,1.2)*1.1+dip(i)+Math.sin(i*1.9)*.006)),cdi=inv.map((x,i)=>x*(1+.0105*i*.9));
+ const band={id:"b",beforeDatasetsDraw(c){const x=c.scales.x,y=c.chartArea,a=x.getPixelForValue(4),b=x.getPixelForValue(7),k=c.ctx;k.save();k.fillStyle="rgba(217,45,58,.12)";k.fillRect(a,y.top,b-a,y.height);k.fillStyle=R;k.font="600 11px Inter";k.fillText("Queda: incerteza fiscal e política (simulada)",a+4,y.top+14);k.restore()}};
+ dst("c1",{type:"line",plugins:[band],data:{labels:M,datasets:[{label:"Patrimônio",data:pat,borderColor:"#ffc20e",backgroundColor:"#ffc20e22",fill:true,tension:.35,borderWidth:3,pointRadius:0},{label:"Valor aplicado",data:inv,borderColor:mut,borderDash:[5,5],tension:.35,pointRadius:0,borderWidth:2},{label:"CDI",data:cdi,borderColor:"#6366f1",tension:.35,pointRadius:0,borderWidth:2}]},options:{maintainAspectRatio:false,scales:{y:{grid:{color:line},ticks:{callback:x=>"R$ "+Math.round(x/1000)+"k"}},x:{grid:{display:false}}},plugins:{tooltip:{callbacks:{label:c=>c.dataset.label+": "+FMT(c.raw)}}}}});
+ const L=posL(),cs=Object.keys(CN),cv=cs.map(c=>sum(L.filter(p=>p.c==c),p=>p.val));
+ dst("c2",{type:"doughnut",data:{labels:cs.map(c=>CN[c]),datasets:[{data:cv,backgroundColor:["#ffc20e","#111827","#6366f1","#0ea5e9","#94a3b8","#f97316"],borderWidth:0}]},options:{maintainAspectRatio:false,cutout:"62%",plugins:{legend:{position:"bottom"},tooltip:{callbacks:{label:c=>c.label+": "+FMT(c.raw)}}}}});
+ const Z=L.map(p=>({t:p.t,r:(p.val/p.cost-1)*100})).sort((a,b)=>b.r-a.r);
+ dst("c3",{type:"bar",data:{labels:Z.map(s=>s.t),datasets:[{data:Z.map(s=>s.r),backgroundColor:Z.map(s=>s.r>=0?G:R),borderRadius:3}]},options:{maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{maxRotation:90,font:{size:10}}},y:{grid:{color:line}}}}})}
+function refresh(){kpis();tCart();if($("mkt").classList.contains("on")&&document.activeElement.id!="q")tMkt();tExt()}
+function toast(m){const t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display="none",3000)}
+function log(tx,n,v){S.ext.push({d:Date.now(),tx,n,v});save()}
+const close=()=>$("dlg").close();
+function money(k){const d=k=="dep";$("dlg").innerHTML=`<h3>${d?"Depositar":"Sacar"}</h3><p>Saldo em conta: ${FMT(S.cash)}</p><label for="vv">Valor (R$)</label><input id="vv" type="number" min="0" step="0.01" placeholder="0,00"><div class="row"><button class="btn" id="ok">Confirmar</button><button class="btn o" style="color:var(--ink);border-color:var(--line)" onclick="close_()">Cancelar</button></div>`;
+ $("dlg").showModal();$("ok").onclick=()=>{const v=+$("vv").value;if(!(v>0))return toast("Informe um valor válido.");if(!d&&v>S.cash)return toast("Saldo insuficiente para o saque.");S.cash+=d?v:-v;log(d?"Depósito":"Saque",d?"Via Pix":"Para conta bancária",v);close();refresh();charts();toast((d?"Depósito":"Saque")+" de "+FMT(v)+" realizado.")}}
+function trade(k,t){const a=get(t),buy=k=="buy",h=S.pos[t];
+ $("dlg").innerHTML=`<h3>${buy?"Comprar":"Vender"} ${a.t}</h3><p>${a.n}</p><p>Preço atual: <b>${FMT(a.price)}</b> · ${buy?"Saldo: "+FMT(S.cash):"Você tem: "+(h?fq(h.q,a.c):0)}</p><label for="vv">Quantidade${INT.includes(a.c)?"":" (fracionada)"}</label><input id="vv" type="number" min="0" step="${INT.includes(a.c)?1:a.c=='C'?0.0001:0.01}" placeholder="0"><div class="tot" id="tt">Total: ${FMT(0)}</div><div class="row"><button class="btn ${buy?'g':'r'}" id="ok">${buy?"Comprar":"Vender"}</button><button class="btn o" style="color:var(--ink);border-color:var(--line)" onclick="close_()">Cancelar</button></div>`;
+ $("dlg").showModal();$("vv").oninput=()=>$("tt").textContent="Total: "+FMT((+$("vv").value||0)*a.price);
+ $("ok").onclick=()=>{const q=+$("vv").value,tot=q*a.price;if(!(q>0))return toast("Informe a quantidade.");if(INT.includes(a.c)&&!Number.isInteger(q))return toast("Para este ativo, use quantidade inteira.");
+  if(buy){if(tot>S.cash)return toast("Saldo insuficiente. Faça um depósito.");S.cash-=tot;const p=S.pos[t]||(S.pos[t]={q:0,cost:0});p.q+=q;p.cost+=tot;log("Compra",q+" × "+t,tot)}
+  else{if(!h||q>h.q+1e-9)return toast("Quantidade maior que a sua posição.");h.cost-=h.cost/h.q*q;h.q-=q;S.cash+=tot;if(h.q<1e-9)delete S.pos[t];log("Venda",q+" × "+t,tot)}
+  close();refresh();charts();toast((buy?"Compra":"Venda")+" executada: "+q+" × "+t)}}
+window.close_=close;
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.m)money(b.dataset.m);else if(b.dataset.a)trade(b.dataset.a,b.dataset.t);
+ else if(b.dataset.f){F=b.dataset.f;tMkt()}
+ else if(b.dataset.v){document.querySelectorAll(".v").forEach(x=>x.classList.toggle("on",x.id==b.dataset.v));document.querySelectorAll("#top button").forEach(x=>x.classList.toggle("on",x==b));if(b.dataset.v=="mkt")tMkt();refresh();if(b.dataset.v=="dash")charts()}});
+document.addEventListener("input",e=>{if(e.target.id=="q")tMkt()});
+async function live(){try{
+ const t=A.filter(a=>"AFG".includes(a.c)).map(a=>a.t).join(","),ids=Object.values(GEC).join(",");
+ const[a,b]=await Promise.all([fetch(`https://brapi.dev/api/quote/${t}?token=${TOKEN}`).then(r=>r.json()),fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=brl&include_24hr_change=true`).then(r=>r.json())]);
+ let n=0;(a.results||[]).forEach(x=>{const s=get(x.symbol);if(s&&x.regularMarketPrice){s.price=x.regularMarketPrice;s.open=s.price/(1+(x.regularMarketChangePercent||0)/100);n++}});
+ Object.entries(GEC).forEach(([k,id])=>{const s=get(k);if(b[id]){s.price=b[id].brl;s.open=s.price/(1+(b[id].brl_24h_change||0)/100);n++}});
+ if(!n)throw 0;LIVE=true;if(!SAVED){A.forEach(s=>s.p0=s.price);seed();SAVED=true;save()}
+ $("st").textContent="Cotações ao vivo";$("st").className="badge live"}catch(e){}
+ $("upd").textContent="Atualizado às "+new Date().toLocaleTimeString("pt-BR");refresh();charts()}
+setInterval(()=>{if(LIVE)return;const V={A:.004,F:.0015,G:.004,C:.01};A.forEach(a=>{a.price*=V[a.c]?1+(Math.random()-.5)*V[a.c]:1.00002});refresh()},3000);
+$("data").textContent=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"});
+refresh();charts();live();setInterval(live,60000);
+</script>
+</body>
+</html>
